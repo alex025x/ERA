@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+from src.data_management import load_pkl_file
 from src.machine_learning.evaluate_clf import clf_performance
 
 def page_model_performance_body():
@@ -13,6 +15,16 @@ def page_model_performance_body():
     )
 
     st.write("---")
+
+    # Load the necessary files
+    version = 'v2'  # Adjust version if needed
+    base_path = f'outputs/ml_pipeline/classification_model/{version}/'
+
+    X_train = pd.read_csv(f"{base_path}/X_train.csv")
+    X_test = pd.read_csv(f"{base_path}/X_test.csv")
+    y_train = pd.read_csv(f"{base_path}/y_train.csv").values
+    y_test = pd.read_csv(f"{base_path}/y_test.csv").values
+    pipeline = load_pkl_file(f"{base_path}/classification_pipeline.pkl")
 
     # Insert the performance evaluation code here
     clf_performance(X_train, y_train, X_test, y_test, pipeline, label_map=["No Attrition", "Attrition"])
