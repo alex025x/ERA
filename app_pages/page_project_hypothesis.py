@@ -1,16 +1,16 @@
 import streamlit as st
 
-
-def page_project_hypothesis_body():
-
-    st.write("### Project Hypothesis and Validation")
-
-    # conclusions taken from "02 - Churned Customer Study" notebook
-    st.success(
-        f"* We suspect customers are churning with low tenure levels: Correct. "
-        f"The correlation study at Churned Customer Study supports that. \n\n"
-
-        f"* A customer survey showed our customers appreciate fibre Optic. "
-        f"A churned user typically has Fibre Optic, as demonstrated by a Churned Customer Study. "
-        f"This insight will be used by the survey team for further discussions and investigations."
+def page_project_hypotheses_body():
+    st.write("### Project Hypotheses")
+    
+    st.info(
+        f"The project is guided by the following hypotheses:\n"
+        f"* **Hypothesis 1**: Employees with lower job satisfaction are more likely to leave the company.\n"
+        f"* **Hypothesis 2**: Employees with lower monthly income are more prone to attrition.\n"
+        f"* **Hypothesis 3**: Employees with shorter tenure or fewer years at the company have a higher likelihood of leaving.\n"
+        f"* **Hypothesis 4**: Certain job roles have higher attrition rates than others."
+    )
+    
+    st.write(
+        f"These hypotheses will be tested using the employee attrition data through correlation analysis and predictive modeling."
     )
