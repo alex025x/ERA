@@ -2,12 +2,12 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
-from src.data_management import load_telco_data, load_pkl_file
+from src.data_management import load_employee_data, load_pkl_file
 
 
 def page_cluster_body():
 
-    # load cluster analysis files and pipeline
+    # Load cluster analysis files and pipeline
     version = 'v1'
     cluster_pipe = load_pkl_file(
         f"outputs/ml_pipeline/cluster_analysis/{version}/cluster_pipeline.pkl")
@@ -22,12 +22,12 @@ def page_cluster_body():
                         .to_list()
                         )
 
-    # dataframe for cluster_distribution_per_variable()
-    df_churn_vs_clusters = load_telco_data().filter(['Churn'], axis=1)
-    df_churn_vs_clusters['Clusters'] = cluster_pipe['model'].labels_
+    # Dataframe for cluster_distribution_per_variable()
+    df_attrition_vs_clusters = load_employee_data().filter(['Attrition'], axis=1)
+    df_attrition_vs_clusters['Clusters'] = cluster_pipe['model'].labels_
 
     st.write("### ML Pipeline: Cluster Analysis")
-    # display pipeline training summary conclusions
+    # Display pipeline training summary conclusions
     st.info(
         f"* We refitted the cluster pipeline using fewer variables, and it delivered equivalent "
         f"performance to the pipeline fitted using all variables.\n"
@@ -44,42 +44,40 @@ def page_cluster_body():
     st.write("#### Clusters Silhouette Plot")
     st.image(cluster_silhouette)
 
-    cluster_distribution_per_variable(df=df_churn_vs_clusters, target='Churn')
+    cluster_distribution_per_variable(df=df_attrition_vs_clusters, target='Attrition')
 
     st.write("#### Most important features to define a cluster")
     st.image(features_to_cluster)
 
-    # text based on "07 - Modeling and Evaluation - Cluster Sklearn" notebook conclusions
+    # Text based on the cluster analysis notebook conclusions
     st.write("#### Cluster Profile")
     statement = (
-        f"* Historically, **users in Clusters 0 do not tend to Churn**, "
-        f"whereas in **Cluster 1 a third of users churned**, "
-        f"and in **Cluster 2 a quarter of users churned**. \n"
-        f"* From the Predict Churn study, we noticed that the ContractType and InternetService "
-        f"are the predictor variables to determine, if a person will churn or not.\n"
-        f"* **One potential action** when you detect that a given prospect is expected to churn and "
-        f"will belong to cluster 1 or 2 is to mainly avoid month to month contract type, "
-        f"like we learned in the churned customer study. \n"
-        f"* The salesperson would have then to consider the current product and services "
-        f"plan availability and encourage the prospect to move to another contract."
+        f"* Historically, **employees in Cluster 0 do not tend to leave**, "
+        f"whereas in **Cluster 1 a significant portion of employees left**, "
+        f"and in **Cluster 2 a moderate portion of employees left**. \n"
+        f"* From the Predict Attrition study, we noticed that Job Role and Monthly Income "
+        f"are key predictor variables in determining whether an employee will leave or stay.\n"
+        f"* **One potential action** when you detect that a given employee is expected to leave and "
+        f"belongs to cluster 1 or 2 is to focus on improving job satisfaction or offering better incentives, "
+        f"as learned from the attrition study."
     )
     st.info(statement)
 
-    # text based on "07 - Modeling and Evaluation - Cluster Sklearn" notebook conclusions
+    # Additional cluster profile interpretation
     statement = (
-        f"* The cluster profile interpretation allowed us to label the cluster in the following fashion:\n"
-        f"* Cluster 0 has users without internet, who are low spenders with a phone.\n"
-        f"* Cluster 1 has users with Internet, who are high spenders with a phone.\n"
-        f"* Cluster 2 has users with Internet, who are mid spenders without a phone."
+        f"* The cluster profile interpretation allowed us to label the clusters in the following way:\n"
+        f"* Cluster 0 consists of employees with stable job roles and satisfaction.\n"
+        f"* Cluster 1 includes employees with high workload and moderate satisfaction.\n"
+        f"* Cluster 2 includes employees with lower income and lower satisfaction."
     )
     st.success(statement)
 
-    # hack to not display the index in st.table() or st.write()
+    # Hack to not display the index in st.table() or st.write()
     cluster_profile.index = [" "] * len(cluster_profile)
     st.table(cluster_profile)
 
 
-# code coped from "07 - Modeling and Evaluation - Cluster Sklearn" notebook - under "Cluster Analysis" section
+# Function for visualizing cluster distribution per variable
 def cluster_distribution_per_variable(df, target):
 
     df_bar_plot = df.value_counts(["Clusters", target]).reset_index()
@@ -91,7 +89,6 @@ def cluster_distribution_per_variable(df, target):
                  color=target, width=800, height=350)
     fig.update_layout(xaxis=dict(tickmode='array',
                       tickvals=df['Clusters'].unique()))
-    # we replaced fig.show() for a streamlit command to render the plot
     st.plotly_chart(fig)
 
     df_relative = (df
@@ -110,5 +107,4 @@ def cluster_distribution_per_variable(df, target):
     fig.update_layout(xaxis=dict(tickmode='array',
                       tickvals=df['Clusters'].unique()))
     fig.update_traces(mode='markers+lines')
-    # we replaced fig.show() for a streamlit command to render the plot
     st.plotly_chart(fig)
