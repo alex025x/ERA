@@ -10,7 +10,3 @@ def page_project_conclusions_body():
     )
 
     st.write("---")
-
-    st.write(
-        f"Moving forward, the model can be further refined with additional data, and strategies can be implemented to retain high-risk employees."
-    )
