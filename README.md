@@ -187,4 +187,4 @@ Employee attrition is a critical issue for companies as it affects productivity 
 
 * The App live link is: [Employee Retention Analyzer](#)
 
-The project
+
