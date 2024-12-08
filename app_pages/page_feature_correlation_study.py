@@ -2,7 +2,16 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from src.data_management import load_employee_data
+
+def load_employee_data():
+    """Load HR employee churn dataset."""
+    dataset_path = "/workspace/ERA/inputs/datasets/hr_employee_churn_data.csv"
+    try:
+        df = pd.read_csv(dataset_path)
+        return df
+    except FileNotFoundError:
+        st.error(f"Dataset not found at {dataset_path}. Please check the file path.")
+        return None
 
 def page_feature_correlation_study_body():
     st.write("### Feature Correlation Study")
@@ -22,12 +31,14 @@ def page_feature_correlation_study_body():
 
     # Load the dataset
     df = load_employee_data()
+    if df is None:
+        return
 
     # Section 2: Summary of Correlation Analysis
     st.write("#### Summary of Correlation Analysis")
     st.write(
         """
-        We performed correlations within the dataset using both Spearman and Pearson correlations. 
+        I performed correlations within the dataset using both Spearman and Pearson correlations. 
         For these analyses, categorical features were one-hot encoded to facilitate the computation of correlations.
         The correlation matrices help in identifying how different variables relate to employee attrition.
         """
