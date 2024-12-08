@@ -8,7 +8,7 @@ def load_employee_data():
     """
     Function to load the employee attrition dataset.
     """
-    file_path = "inputs/datasets/raw/WA_Fn-UseC_-HR-Employee-Attrition.csv"
+    file_path = "workspace/era/inputs/datasets/hr_employee_churn_data.csv"
     if os.path.exists(file_path):
         df = pd.read_csv(file_path)
         return df
