@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
-from src.data_management import load_pkl_file
 
 def run_prediction(model, input_data: pd.DataFrame):
     """
@@ -26,10 +25,10 @@ def page_employee_retention_analyzer_body():
     st.info(
         f"""
         ### Model Performance Metrics:
-        * Best Model: Random Forest with Pipeline (Scaling + Model)
-        * Validation F1 Score: 0.963
+        * Best Model: Random Forest Pipeline
+        * Test Accuracy: 96%
+        * F1 Score: 0.96
         * Handles both numerical and categorical features
-        * Trained on balanced dataset using SMOTE
         
         The model predicts whether an employee is likely to leave based on key features 
         identified through our analysis.
@@ -38,12 +37,12 @@ def page_employee_retention_analyzer_body():
 
     # Load trained model
     try:
-        model = joblib.load('/workspace/ERA/outputs/models/best_model_pipeline.pkl')
+        model = joblib.load('outputs/models/best_model_pipeline.pkl')
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
         return
 
-    # Define features (based on your engineered dataset)
+    # Define features
     st.write("### Enter Employee Information")
     st.write("Please provide the following information to analyze retention risk:")
 
@@ -76,7 +75,7 @@ def page_employee_retention_analyzer_body():
         salary = st.selectbox('Salary Level', ['low', 'medium', 'high'],
                             help="Employee's salary category")
 
-    # Create input dataframe
+    # Create input dataframe with explicit column order
     input_data = pd.DataFrame({
         'satisfaction_level': [satisfaction_level],
         'last_evaluation': [last_evaluation],
@@ -86,7 +85,9 @@ def page_employee_retention_analyzer_body():
         'Work_accident': [Work_accident],
         'promotion_last_5years': [promotion_last_5years],
         'salary': [salary]
-    })
+    }, columns=['satisfaction_level', 'last_evaluation', 'number_project', 
+               'average_montly_hours', 'time_spend_company', 'Work_accident',
+               'promotion_last_5years', 'salary'])
 
     # Make prediction when button is clicked
     if st.button('Analyze Retention Risk'):
@@ -141,8 +142,8 @@ def page_employee_retention_analyzer_body():
     1. Satisfaction Level
     2. Time in Company
     3. Number of Projects
-    4. Last Evaluation
-    5. Monthly Hours
+    4. Monthly Hours
+    5. Last Evaluation
     
     Based on Random Forest feature importance analysis
     """)
