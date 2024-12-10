@@ -1,91 +1,148 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
+import joblib
 from src.data_management import load_pkl_file
-from sklearn.pipeline import Pipeline
 
-def run_prediction(pipeline: Pipeline, input_data: pd.DataFrame):
-    return pipeline.predict(input_data)
+def run_prediction(model, input_data: pd.DataFrame):
+    """
+    Make prediction using the trained model pipeline
+    """
+    try:
+        prediction = model.predict(input_data)
+        prediction_proba = model.predict_proba(input_data)
+        return prediction, prediction_proba
+    except Exception as e:
+        st.error(f"Error making prediction: {str(e)}")
+        return None, None
 
 def page_employee_retention_analyzer_body():
-
+    """
+    Display the employee retention analyzer page
+    """
     st.write("### Employee Retention Analyzer")
 
+    # Project Overview
     st.info(
-        """
-        The client is interested in predicting whether an employee is at risk of leaving the company. 
-        A machine learning model was built using a binary classification model with the following success metrics:
-        - At least 80% recall for attrition on train and test sets (no more than 20% missed positive predictions).
-        - At least 75% precision for no attrition (reducing the number of false positives).
+        f"""
+        ### Model Performance Metrics:
+        * Best Model: Random Forest with Pipeline (Scaling + Model)
+        * Validation F1 Score: 0.963
+        * Handles both numerical and categorical features
+        * Trained on balanced dataset using SMOTE
+        
+        The model predicts whether an employee is likely to leave based on key features 
+        identified through our analysis.
         """
     )
 
-    # Load the necessary pipeline
-    version = 'v2'  # Adjust version if needed
-    base_path = f'outputs/ml_pipeline/classification_model/{version}/'
-    pipeline = load_pkl_file(f"{base_path}/classification_pipeline.pkl")
+    # Load trained model
+    try:
+        model = joblib.load('/workspace/ERA/outputs/models/best_model_pipeline.pkl')
+    except Exception as e:
+        st.error(f"Error loading model: {str(e)}")
+        return
 
-    # Define the features in the exact order expected by the model
-    feature_names = [
-        'Age', 'BusinessTravel', 'Department', 'DistanceFromHome', 'Education',
-        'EducationField', 'EnvironmentSatisfaction', 'Gender', 'JobInvolvement',
-        'JobLevel', 'JobRole', 'MaritalStatus', 'MonthlyIncome', 'NumCompaniesWorked',
-        'OverTime', 'JobSatisfaction', 'PerformanceRating', 'RelationshipSatisfaction',
-        'StockOptionLevel', 'TotalWorkingYears', 'TrainingTimesLastYear',
-        'WorkLifeBalance', 'YearsAtCompany', 'YearsInCurrentRole',
-        'YearsSinceLastPromotion', 'YearsWithCurrManager', 'DailyRate',
-        'EmployeeCount', 'EmployeeNumber', 'HourlyRate', 'MonthlyRate', 'StandardHours',
-        'Over18', 'PercentSalaryHike'
-    ]
+    # Define features (based on your engineered dataset)
+    st.write("### Enter Employee Information")
+    st.write("Please provide the following information to analyze retention risk:")
 
-    # Collect input data
+    col1, col2 = st.columns(2)
+
+    with col1:
+        # Satisfaction and Evaluation Metrics
+        st.write("#### Satisfaction Metrics")
+        satisfaction_level = st.slider('Satisfaction Level', 0.0, 1.0, 0.5, 0.01,
+                                     help="Employee's last satisfaction survey score")
+        last_evaluation = st.slider('Last Evaluation Score', 0.0, 1.0, 0.7, 0.01,
+                                  help="Score from most recent performance evaluation")
+        
+        # Project and Time Metrics
+        st.write("#### Workload Metrics")
+        number_project = st.slider('Number of Projects', 2, 7, 4,
+                                 help="Number of projects employee is involved in")
+        average_montly_hours = st.slider('Average Monthly Hours', 96, 310, 200,
+                                       help="Average working hours per month")
+
+    with col2:
+        # Career Metrics
+        st.write("#### Career Metrics")
+        time_spend_company = st.slider('Years in Company', 2, 10, 3,
+                                     help="Total years employed at the company")
+        Work_accident = st.selectbox('Had Work Accident', [0, 1],
+                                   help="Whether employee had a workplace accident (0=No, 1=Yes)")
+        promotion_last_5years = st.selectbox('Promoted in Last 5 Years', [0, 1],
+                                           help="Whether employee was promoted in last 5 years (0=No, 1=Yes)")
+        salary = st.selectbox('Salary Level', ['low', 'medium', 'high'],
+                            help="Employee's salary category")
+
+    # Create input dataframe
     input_data = pd.DataFrame({
-        'Age': [st.slider('Age', 18, 65, 30)],
-        'BusinessTravel': [st.selectbox('Business Travel', ['Travel_Rarely', 'Travel_Frequently', 'Non-Travel'])],
-        'Department': [st.selectbox('Department', ['Sales', 'Research & Development', 'Human Resources'])],
-        'DistanceFromHome': [st.slider('Distance From Home (miles)', 1, 30, 10)],
-        'Education': [st.slider('Education', 1, 5, 3)],
-        'EducationField': [st.selectbox('Education Field', ['Life Sciences', 'Medical', 'Marketing', 
-                                                            'Technical Degree', 'Human Resources', 'Other'])],
-        'EnvironmentSatisfaction': [st.slider('Environment Satisfaction', 1, 4, 3)],
-        'Gender': [st.selectbox('Gender', ['Male', 'Female'])],
-        'JobInvolvement': [st.slider('Job Involvement', 1, 4, 3)],
-        'JobLevel': [st.slider('Job Level', 1, 5, 2)],
-        'JobRole': [st.selectbox('Job Role', ['Sales Executive', 'Research Scientist', 'Laboratory Technician', 
-                                              'Manufacturing Director', 'Healthcare Representative', 
-                                              'Manager', 'Sales Representative', 'Research Director', 
-                                              'Human Resources'])],
-        'MaritalStatus': [st.selectbox('Marital Status', ['Single', 'Married', 'Divorced'])],
-        'MonthlyIncome': [st.slider('Monthly Income', 1000, 20000, 5000)],
-        'NumCompaniesWorked': [st.slider('Number of Companies Worked', 0, 10, 1)],
-        'OverTime': [st.selectbox('Over Time', ['Yes', 'No'])],
-        'JobSatisfaction': [st.slider('Job Satisfaction', 1, 4, 3)],
-        'PerformanceRating': [st.slider('Performance Rating', 1, 4, 3)],
-        'RelationshipSatisfaction': [st.slider('Relationship Satisfaction', 1, 4, 3)],
-        'StockOptionLevel': [st.slider('Stock Option Level', 0, 3, 1)],
-        'TotalWorkingYears': [st.slider('Total Working Years', 0, 40, 10)],
-        'TrainingTimesLastYear': [st.slider('Training Times Last Year', 0, 6, 3)],
-        'WorkLifeBalance': [st.slider('Work Life Balance', 1, 4, 3)],
-        'YearsAtCompany': [st.slider('Years at Company', 0, 40, 5)],
-        'YearsInCurrentRole': [st.slider('Years in Current Role', 0, 18, 4)],
-        'YearsSinceLastPromotion': [st.slider('Years Since Last Promotion', 0, 15, 2)],
-        'YearsWithCurrManager': [st.slider('Years with Current Manager', 0, 17, 5)],
-        'DailyRate': [st.slider('Daily Rate', 100, 1500, 800)],
-        'EmployeeCount': [1],  # Constant value
-        'EmployeeNumber': [12345],  # Example value
-        'HourlyRate': [st.slider('Hourly Rate', 30, 100, 50)],
-        'MonthlyRate': [st.slider('Monthly Rate', 2000, 30000, 15000)],
-        'StandardHours': [80],  # Assuming standard across all employees
-        'Over18': ['Yes'],  # Assuming all employees are over 18
-        'PercentSalaryHike': [st.slider('Percent Salary Hike', 0, 25, 10)],
+        'satisfaction_level': [satisfaction_level],
+        'last_evaluation': [last_evaluation],
+        'number_project': [number_project],
+        'average_montly_hours': [average_montly_hours],
+        'time_spend_company': [time_spend_company],
+        'Work_accident': [Work_accident],
+        'promotion_last_5years': [promotion_last_5years],
+        'salary': [salary]
     })
 
-    # Ensure input_data matches the order and content of feature_names
-    input_data = input_data[feature_names]
+    # Make prediction when button is clicked
+    if st.button('Analyze Retention Risk'):
+        prediction, prediction_proba = run_prediction(model, input_data)
+        
+        if prediction is not None:
+            # Display prediction
+            if prediction[0] == 1:
+                st.error("### ⚠️ High Risk of Departure")
+                risk_probability = prediction_proba[0][1]
+                st.write(f"Probability of leaving: {risk_probability:.2%}")
+                
+                st.write("#### Risk Factors:")
+                if satisfaction_level < 0.5:
+                    st.write("* Low satisfaction level")
+                if average_montly_hours > 250:
+                    st.write("* High workload")
+                if time_spend_company > 5 and promotion_last_5years == 0:
+                    st.write("* Lack of career progression")
+                
+                st.write("#### Recommended Actions:")
+                st.write("""
+                * Schedule immediate manager discussion
+                * Review workload distribution
+                * Consider development opportunities
+                * Evaluate compensation package
+                """)
+            else:
+                st.success("### ✅ Low Risk of Departure")
+                retention_probability = prediction_proba[0][0]
+                st.write(f"Probability of staying: {retention_probability:.2%}")
+                
+                st.write("#### Positive Indicators:")
+                if satisfaction_level > 0.7:
+                    st.write("* High satisfaction level")
+                if Work_accident == 0:
+                    st.write("* Good safety record")
+                if promotion_last_5years == 1:
+                    st.write("* Recent career advancement")
+                
+                st.write("#### Retention Strategies:")
+                st.write("""
+                * Maintain regular feedback sessions
+                * Continue professional development
+                * Monitor workload balance
+                * Consider for future advancement opportunities
+                """)
 
-    # Run prediction
-    if st.button('Run Predictive Analysis'):
-        prediction = run_prediction(pipeline, input_data)
-        if prediction[0] == 1:
-            st.error("The model predicts this employee is at risk of attrition.")
-        else:
-            st.success("The model predicts this employee is not at risk of attrition.")
+    # Add feature importance note
+    st.info("""
+    ### Key Factors in Order of Importance:
+    1. Satisfaction Level
+    2. Time in Company
+    3. Number of Projects
+    4. Last Evaluation
+    5. Monthly Hours
+    
+    Based on Random Forest feature importance analysis
+    """)
