@@ -4,8 +4,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 def load_employee_data():
-    """Load HR employee churn dataset."""
-    dataset_path = "/workspace/ERA/inputs/datasets/hr_employee_churn_data.csv"
+    """Load HR employee dataset."""
+    dataset_path = "inputs/datasets/hr_employee_churn_data.csv"
     try:
         df = pd.read_csv(dataset_path)
         return df
