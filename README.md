@@ -1,6 +1,6 @@
 # Employee Retention Analyzer - A Predictive Classification Model for Employee Attrition
 
-[Employee Retention Analyzer] is a machine-learning (ML) project that uses HR analytics data to predict the likelihood of employee attrition. The model achieves this through a classification task, using the 'left' attribute from the dataset as the target and employee characteristics as features. The project provides HR teams with actionable insights for improving retention strategies.
+[Employee Retention Analyzer](https://employeeretentionanalyzer-42c90ed57246.herokuapp.com/) is a machine-learning (ML) project that uses HR analytics data to predict the likelihood of employee attrition. The model achieves this through a classification task, using the 'left' attribute from the dataset as the target and employee characteristics as features. The project provides HR teams with actionable insights for improving retention strategies. is a machine-learning (ML) project that uses HR analytics data to predict the likelihood of employee attrition. The model achieves this through a classification task, using the 'left' attribute from the dataset as the target and employee characteristics as features. The project provides HR teams with actionable insights for improving retention strategies.
 
 ## Table of Contents
 - [Dataset Content](#dataset-content)
@@ -19,7 +19,7 @@
 - [Acknowledgements](#acknowledgements)
 
 ## Dataset Content
-* The dataset is sourced from [XXXX]. Each row represents an employee and each column contains employee attributes. The dataset includes information about:
+* The dataset is sourced from [Kaggle](https://www.kaggle.com/code/karthikssalian/employee-retention-analysis-and-prediction) and has been adjusted accordingly for my project. Each row represents an employee and each column contains employee attributes. The dataset includes information about:
     - Employee satisfaction levels
     - Performance evaluation scores
     - Number of projects
