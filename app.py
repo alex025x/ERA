@@ -1,4 +1,8 @@
 import streamlit as st
+st.set_page_config(
+    page_title="ERA",
+    page_icon="/workspace/ERA/images/eralogo.png"
+)
 from app_pages.multipage import MultiPage  # Import the MultiPage class
 
 # Import page functions
