@@ -275,7 +275,6 @@ The project was split into 5 Epics based on Data Analysis and ML tasks, with use
 
 [Back to top](#table-of-contents)
 
-[Previous sections above...]
 
 ## Technologies Used
 
