@@ -361,7 +361,89 @@ The technologies used throughout the development are listed below:
 [Back to top](#table-of-contents)
 
 ## Deployment
-### Local Deployment
-1. Clone the repository:
-```bash
-git clone [repository-url]
+### Heroku
+
+* The App live link is: [CVD Predictor](https://cvd-predictor-a8ce111af1d1.herokuapp.com/)
+
+The project was deployed to Heroku using the following steps:
+
+1. Within your working directory, ensure there is a setup.sh file containing the following:
+```
+mkdir -p ~/.streamlit/
+echo "\
+[server]\n\
+headless = true\n\
+port = $PORT\n\
+enableCORS = false\n\
+\n\
+" > ~/.streamlit/config.toml
+```
+2. Within your working directory, ensure there is a runtime.txt file containing a [Heroku-20](https://devcenter.heroku.com/articles/python-support#supported-runtimes) stack supported version of Python.
+```
+python-3.10.12
+```
+3. Within your working directory, ensure there is a Procfile file containing the following:
+```
+web: sh setup.sh && streamlit run app.py
+```
+4. Ensure your requirements.txt file contains all the packages necessary to run the streamlit dashboard.
+5. Update your .gitignore and .slugignore files with any files/directories that you do not want uploading to GitHub or are unnecessary for deployment.
+6. Log in to [Heroku](https://id.heroku.com/login) or create an account if you do not already have one.
+7. Click the **New** button on the dashboard and from the dropdown menu select "Create new app".
+8. Enter a suitable app name and select your region, then click the **Create app** button.
+9. Once the app has been created, navigate to the Deploy tab.
+10. At the Deploy tab, in the Deployment method section select **GitHub**.
+11. Enter your repository name and click **Search**. Once it is found, click **Connect**.
+12. Navigate to the bottom of the Deploy page to the Manual deploy section and select main from the branch dropdown menu.
+13. Click the **Deploy Branch** button to begin deployment.
+14. The deployment process should happen smoothly if all deployment files are fully functional. Click the button **Open App** at the top of the page to access your App.
+15. If the build fails, check the build log carefully to troubleshoot what went wrong.
+
+[Back to top](#table-of-contents)
+
+## Forking and Cloning
+If you wish to fork or clone this repository, please follow the instructions below:
+
+### Forking
+1. In the top right of the main repository page, click the **Fork** button.
+2. Under **Owner**, select the desired owner from the dropdown menu.
+3. **OPTIONAL:** Change the default name of the repository in order to distinguish it.
+4. **OPTIONAL:** In the **Description** field, enter a description for the forked repository.
+5. Ensure the 'Copy the main branch only' checkbox is selected.
+6. Click the **Create fork** button.
+
+### Cloning
+1. On the main repository page, click the **Code** button.
+2. Copy the HTTPS URL from the resulting dropdown menu.
+3. In your IDE terminal, navigate to the directory you want the cloned repository to be created.
+4. In your IDE terminal, type ```git clone``` and paste the copied URL.
+5. Hit Enter to create the cloned repository.
+
+### Installing Requirements
+**WARNING:** The packages listed in the requirements.txt file are limited to those necessary for the deployment of the dashboard to Heroku, due to the limit on the slug size.
+
+In order to ensure all the correct dependencies are installed in your local environment, run the following command in the terminal:
+
+    pip install -r full-requirements.txt
+
+[Back to top](#table-of-contents)
+
+## Credits 
+
+### Content 
+
+#### Data Cleaning Notebook
+* The custom function for checking the effect of data cleaning on distribution was partially taken from the Code Institute "Data Analytics Packages - ML: feature-engine" module.
+
+#### Modelling And Evaluation Notebook
+* David Langer [Hyperparameter Tuning](https://www.youtube.com/watch?v=2-ccInULI_0) video was used to help define the hyperparameter values used for optimisation.
+* The custom function for carrying out hyperparameter optimisation was taken from the Code Institute "Data Analytics Packages - ML: Scikit-learn" module.
+* The custom function for displaying the confusion matrix and analysing model performance was taken from the Code Institute "Data Analytics Packages - ML: Scikit-learn" module.
+
+#### Streamlit Dashboard
+* The multi-page class was taken from the Code Institute "Data Analysis & Machine Learning Toolkit" streamlit lessons.
+
+[Back to top](#table-of-contents)
+
+## Acknowledgements
+* Thanks to my mentor Mo Shami for his invaluable guidance and detailed feedback throughout this project, which greatly contributed to its successful development and implementation.
