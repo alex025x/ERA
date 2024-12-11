@@ -345,19 +345,12 @@ The technologies used throughout the development are listed below:
 [Back to top](#table-of-contents)
 
 ## Issues
-### Deployment Challenges
-[Describe any significant issues encountered during development]
-* Issue 1 description and resolution
-* Issue 2 description and resolution
-
-[Screenshot placeholder for any relevant issue documentation]
-
-### Model Performance Optimization
-[Describe any challenges in achieving desired model performance]
-* Challenge 1 description and solution
-* Challenge 2 description and solution
-
-[Screenshot placeholder for performance metrics]
+### Heroku Deployment Error with Scikit-learn Version
+* Initial deployment of the model failed with error: "'DecisionTreeClassifier' object has no attribute 'monotonic_cst'"
+* This occurred due to a version mismatch between local development (scikit-learn 1.5.0) and Heroku's default scikit-learn version
+* The solution was to update requirements.txt to specify:
+  ```python
+  scikit-learn>=1.5.0
 
 [Back to top](#table-of-contents)
 
