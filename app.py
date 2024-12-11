@@ -1,7 +1,7 @@
 import streamlit as st
 from app_pages.multipage import MultiPage  # Import the MultiPage class
 
-# Import your page functions
+# Import page functions
 from app_pages.page_summary import page_summary_body
 from app_pages.page_project_hypothesis import page_project_hypothesis_body
 from app_pages.page_feature_correlation_study import page_feature_correlation_study_body
